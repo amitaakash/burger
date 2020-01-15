@@ -1,0 +1,22 @@
+.BurgerContainer {
+  width: 100%;
+  margin: auto;
+  height: 50vh;
+  background-color: #f2f2f2;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.Burger {
+  width: 500px;
+  height: 90%;
+  margin: auto;
+  max-width: 60%;
+  overflow: hidden;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-top: 5%;
+}
