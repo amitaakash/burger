@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Burger from '../../components/Burger/Burger';
 import BuildController from '../../components/Burger/BuildController/BuildController';
 import Modal from '../../components/UI/Modal/Modal';
+import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import axios from '../../axios-burger';
 
 const ingredient_price = {
   meat: 1.3,
@@ -12,15 +14,19 @@ const ingredient_price = {
 
 class BurgerBuilder extends Component {
   state = {
-    ingredients: {
-      meat: 0,
-      bacon: 0,
-      salad: 0,
-      cheese: 0
-    },
+    ingredients: '',
     totalPrice: 4,
     isPurchaseable: false,
-    showModal: true
+    showModal: false
+  };
+
+  componentDidMount = () => {
+    axios
+      .get('/ingredients.json')
+      .then(res => {
+        this.setState({ ingredients: res.data });
+      })
+      .catch(err => console.log(err));
   };
 
   addIngredientHandler = type => {
@@ -67,6 +73,11 @@ class BurgerBuilder extends Component {
       showModal: !this.state.showModal
     });
   };
+
+  onPurchaseContinue = () => {
+    alert('you Continue');
+  };
+
   render() {
     const disableInfo = {
       ...this.state.ingredients
@@ -77,7 +88,14 @@ class BurgerBuilder extends Component {
     return (
       <>
         {this.state.showModal ? (
-          <Modal click={this.modalHandler}>Test contents</Modal>
+          <Modal click={this.modalHandler}>
+            <OrderSummary
+              ingredients={this.state.ingredients}
+              price={this.state.totalPrice}
+              purchaseMode={this.modalHandler}
+              purchase={this.onPurchaseContinue}
+            />
+          </Modal>
         ) : null}
         <Burger ingredients={this.state.ingredients} />
         <BuildController
@@ -86,6 +104,7 @@ class BurgerBuilder extends Component {
           disabled={disableInfo}
           price={this.state.totalPrice}
           isPurchaseable={this.state.isPurchaseable}
+          purchaseMode={this.modalHandler}
         />
       </>
     );

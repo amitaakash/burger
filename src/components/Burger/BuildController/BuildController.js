@@ -29,7 +29,9 @@ const buildController = props => {
       </div>
       {buildControls}
       {props.isPurchaseable ? (
-        <button className={styles.OrderButton}>ORDER NOW</button>
+        <button className={styles.OrderButton} onClick={props.purchaseMode}>
+          ORDER NOW
+        </button>
       ) : null}
       {/* <button className={styles.OrderButton}>ORDER NOW</button> */}
     </div>
