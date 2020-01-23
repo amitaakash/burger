@@ -3,7 +3,11 @@ import Burger from '../../components/Burger/Burger';
 import BuildController from '../../components/Burger/BuildController/BuildController';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
-import axios from '../../axios-burger';
+import Spinner from '../../components/UI/Spinner/Spinner';
+import * as actionType from '../../store/actions/index';
+
+import { connect } from 'react-redux';
+// import axios from '../../axios-burger';
 
 const ingredient_price = {
   meat: 1.3,
@@ -14,19 +18,24 @@ const ingredient_price = {
 
 class BurgerBuilder extends Component {
   state = {
-    ingredients: '',
+    /* ingredients: '',
     totalPrice: 4,
-    isPurchaseable: false,
-    showModal: false
+    isPurchaseable: false, */
+    showModal: false,
+    error: null,
+    loading: false
   };
 
   componentDidMount = () => {
-    axios
+    this.props.onInitIngredients();
+    /*  axios
       .get('/ingredients.json')
       .then(res => {
         this.setState({ ingredients: res.data });
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        this.setState({ error: err });
+      }); */
   };
 
   addIngredientHandler = type => {
@@ -69,46 +78,121 @@ class BurgerBuilder extends Component {
     return totalcount > 0;
   };
   modalHandler = () => {
-    this.setState({
-      showModal: !this.state.showModal
-    });
+    if (this.props.isAuth) {
+      this.setState({
+        showModal: !this.state.showModal
+      });
+    } else {
+      this.props.history.push('/auth');
+    }
   };
 
   onPurchaseContinue = () => {
-    alert('you Continue');
+    //alert('You continue');
+    this.setState({ loading: true });
+    /* 
+    const queryParams = [];
+    for (let i in this.state.ingredients) {
+      queryParams.push(
+        encodeURIComponent(i) +
+          '=' +
+          encodeURIComponent(this.state.ingredients[i])
+      );
+    }
+    queryParams.push('price=' + this.state.totalPrice);*/
+    //const queryString = queryParams.join('&');
+    this.props.history.push({
+      pathname: '/checkout'
+      //search: queryString
+    });
   };
 
   render() {
+    //console.log(this.props.isAuth);
     const disableInfo = {
-      ...this.state.ingredients
+      ...this.props.ing
     };
     for (let key in disableInfo) {
       disableInfo[key] = disableInfo[key] <= 0;
     }
+
+    let orderSummary = null;
+
+    if (this.state.loading) {
+      orderSummary = (
+        <Modal click={this.modalHandler} show={this.state.loading}>
+          <Spinner />
+        </Modal>
+      );
+    }
+
+    let burger = !this.props.error ? (
+      <Spinner />
+    ) : (
+      <Modal show={this.props.error}>
+        <p style={{ textAlign: 'center' }}>{this.props.error.message}</p>
+        <p style={{ textAlign: 'center' }}>Try Reload!</p>
+      </Modal>
+    );
+    if (this.props.ing) {
+      burger = (
+        <>
+          <Burger ingredients={this.props.ing} />
+          <BuildController
+            ingredientsAdded={this.props.onIngredientAdded}
+            ingredientsRemoved={this.props.onIngredientRemoved}
+            disabled={disableInfo}
+            price={this.props.price}
+            isPurchaseable={this.isPurchaseable(this.props.ing)}
+            purchaseMode={this.modalHandler}
+            isAuth={this.props.isAuth}
+          />
+        </>
+      );
+
+      orderSummary = (
+        <OrderSummary
+          ingredients={this.props.ing}
+          price={this.props.price}
+          purchaseMode={this.modalHandler}
+          purchase={this.onPurchaseContinue}
+        />
+      );
+    }
+
+    if (this.state.loading) {
+      orderSummary = <Spinner />;
+    }
+
     return (
       <>
-        {this.state.showModal ? (
-          <Modal click={this.modalHandler}>
-            <OrderSummary
-              ingredients={this.state.ingredients}
-              price={this.state.totalPrice}
-              purchaseMode={this.modalHandler}
-              purchase={this.onPurchaseContinue}
-            />
-          </Modal>
-        ) : null}
-        <Burger ingredients={this.state.ingredients} />
-        <BuildController
-          ingredientsAdded={this.addIngredientHandler}
-          ingredientsRemoved={this.removeIngredientHandler}
-          disabled={disableInfo}
-          price={this.state.totalPrice}
-          isPurchaseable={this.state.isPurchaseable}
-          purchaseMode={this.modalHandler}
-        />
+        <Modal click={this.modalHandler} show={this.state.showModal}>
+          {orderSummary}
+        </Modal>
+
+        {burger}
       </>
     );
   }
 }
+const mapStateToProps = state => {
+  // console.log(state.auth.token);
+  return {
+    ing: state.burgerBuilder.ingredients,
+    price: state.burgerBuilder.totalPrice,
+    error: state.burgerBuilder.error,
+    isAuth: state.auth.token !== null
+  };
+};
 
-export default BurgerBuilder;
+const mapDispatchToProps = dispach => {
+  return {
+    onIngredientAdded: ingredientName =>
+      dispach(actionType.addIngredients(ingredientName)),
+    onIngredientRemoved: ingredientName =>
+      dispach(actionType.removeIngredients(ingredientName)),
+    onInitIngredients: () => dispach(actionType.getIngredients())
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BurgerBuilder);

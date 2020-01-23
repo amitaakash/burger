@@ -1,0 +1,37 @@
+.Contactdata {
+  width: 100%;
+  background-color: #cf8f2e;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  box-shadow: 0px 2px 1px #ccc;
+  margin: auto;
+  padding: 10px 0;
+  border-radius: 10px;
+  padding-bottom: 10px;
+  box-sizing: border-box;
+  border: 1px solid #966909;
+}
+
+.Contactdata input {
+  margin: 2px;
+  width: 100%;
+  padding: 5px 10px;
+  border: 1px solid #966909;
+  border-radius: 10px;
+  font-size: 1.2em;
+  display: block;
+}
+
+.Contactdata button {
+  border: 1px solid #fff;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 1.2em;
+}
+
+.form {
+  width: 80%;
+  margin: 0px auto;
+  text-align: center;
+}

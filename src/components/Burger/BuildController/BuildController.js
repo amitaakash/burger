@@ -10,7 +10,6 @@ const controls = [
   { label: 'Cheese', type: 'cheese' }
 ];
 const buildController = props => {
-  //console.log(props.disabled);
   const buildControls = controls.map((control, i) => {
     return (
       <BuildControls
@@ -30,7 +29,7 @@ const buildController = props => {
       {buildControls}
       {props.isPurchaseable ? (
         <button className={styles.OrderButton} onClick={props.purchaseMode}>
-          ORDER NOW
+          {props.isAuth ? 'ORDER NOW' : 'SIGN IN TO ORDER '}
         </button>
       ) : null}
       {/* <button className={styles.OrderButton}>ORDER NOW</button> */}

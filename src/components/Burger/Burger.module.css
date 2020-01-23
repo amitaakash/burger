@@ -6,14 +6,14 @@
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .Burger {
-  width: 500px;
+  width: 90%;
   height: 90%;
   margin: auto;
-  max-width: 60%;
+  max-width: 500px;
   overflow: hidden;
   text-align: center;
   font-weight: bold;
