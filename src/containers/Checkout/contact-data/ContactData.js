@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '../../../components/UI/Buttons/Buttons';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import * as countryList from '../../../shared/countrylist';
@@ -9,132 +9,131 @@ import * as actionType from '../../../store/actions/index';
 import Modal from '../../../components/UI/Modal/Modal';
 import { Link } from 'react-router-dom';
 
-class ContactData extends React.Component {
-  state = {
-    orderForm: {
-      name: {
-        inputtype: 'textbox',
-        htmlConfig: {
-          placeholder: 'Your name',
-          type: 'text'
-        },
-        label: 'Name',
-        value: '',
-        validationConfig: {
-          required: true,
-          minlength: 10,
-          maxlength: 30
-        },
-        isValid: false,
-        isToched: false,
-        message: ''
+const ContactData = props => {
+  const [orderForm, setOrderForm] = useState({
+    name: {
+      inputtype: 'textbox',
+      htmlConfig: {
+        placeholder: 'Your name',
+        type: 'text'
       },
-      phone: {
-        inputtype: 'textbox',
-        htmlConfig: {
-          placeholder: 'Contact number',
-          type: 'tel'
-        },
-        label: 'Contact number',
-        value: '',
-        validationConfig: {
-          required: true,
-          minlength: 10,
-          maxlength: 10
-        },
-        isValid: false,
-        isToched: false,
-        message: ''
+      label: 'Name',
+      value: '',
+      validationConfig: {
+        required: true,
+        minlength: 10,
+        maxlength: 30
       },
-      email: {
-        inputtype: 'textbox',
-        htmlConfig: {
-          placeholder: 'Your email',
-          type: 'email',
-          disabled: true
-        },
-        label: 'Email',
-        value: this.props.email,
-        validationConfig: {
-          //required: true,
-          //email: true
-        },
-        isValid: true,
-        isToched: false,
-        message: ''
-      },
-      address: {
-        inputtype: 'textarea',
-        htmlConfig: {
-          placeholder: 'fill your full adderess'
-        },
-        label: 'Address',
-        value: '',
-        validationConfig: {
-          required: true,
-          minlength: 10,
-          maxlength: 30
-        },
-        isValid: false,
-        isToched: false,
-        message: ''
-      },
-      country: {
-        inputtype: 'option',
-        htmlConfig: {
-          options: countryList.country
-        },
-        label: 'Country',
-        value: '',
-        validationConfig: {
-          required: true
-        },
-        isValid: false,
-        isToched: false,
-        message: ''
-      },
-      zip: {
-        inputtype: 'textbox',
-        htmlConfig: {
-          placeholder: 'zip code',
-          type: 'number',
-          disabled: false,
-          'min-length': 6
-        },
-        label: 'Zip code',
-        value: '',
-        validationConfig: {
-          required: true
-        },
-        isValid: false,
-        isToched: false,
-        message: ''
-      },
-      delivery: {
-        inputtype: 'option',
-        htmlConfig: {
-          options: [
-            { value: '', displayValue: 'Select delivery method' },
-            { value: 'fastest', displayValue: 'I am hungry!' },
-            { value: 'cheepest', displayValue: 'I want to save some pennies!' }
-          ]
-        },
-        label: 'Delivery Method',
-        value: '',
-        validationConfig: {
-          //required: true
-        },
-        isValid: true,
-        isToched: false,
-        message: ''
-      }
+      isValid: false,
+      isToched: false,
+      message: ''
     },
-    formvalidity: false
-  };
+    phone: {
+      inputtype: 'textbox',
+      htmlConfig: {
+        placeholder: 'Contact number',
+        type: 'tel'
+      },
+      label: 'Contact number',
+      value: '',
+      validationConfig: {
+        required: true,
+        minlength: 10,
+        maxlength: 10
+      },
+      isValid: false,
+      isToched: false,
+      message: ''
+    },
+    email: {
+      inputtype: 'textbox',
+      htmlConfig: {
+        placeholder: 'Your email',
+        type: 'email',
+        disabled: true
+      },
+      label: 'Email',
+      value: props.email,
+      validationConfig: {
+        //required: true,
+        //email: true
+      },
+      isValid: true,
+      isToched: false,
+      message: ''
+    },
+    address: {
+      inputtype: 'textarea',
+      htmlConfig: {
+        placeholder: 'fill your full adderess'
+      },
+      label: 'Address',
+      value: '',
+      validationConfig: {
+        required: true,
+        minlength: 10,
+        maxlength: 30
+      },
+      isValid: false,
+      isToched: false,
+      message: ''
+    },
+    country: {
+      inputtype: 'option',
+      htmlConfig: {
+        options: countryList.country
+      },
+      label: 'Country',
+      value: '',
+      validationConfig: {
+        required: true
+      },
+      isValid: false,
+      isToched: false,
+      message: ''
+    },
+    zip: {
+      inputtype: 'textbox',
+      htmlConfig: {
+        placeholder: 'zip code',
+        type: 'number',
+        disabled: false,
+        'min-length': 6
+      },
+      label: 'Zip code',
+      value: '',
+      validationConfig: {
+        required: true
+      },
+      isValid: false,
+      isToched: false,
+      message: ''
+    },
+    delivery: {
+      inputtype: 'option',
+      htmlConfig: {
+        options: [
+          { value: '', displayValue: 'Select delivery method' },
+          { value: 'fastest', displayValue: 'I am hungry!' },
+          { value: 'cheepest', displayValue: 'I want to save some pennies!' }
+        ]
+      },
+      label: 'Delivery Method',
+      value: '',
+      validationConfig: {
+        //required: true
+      },
+      isValid: true,
+      isToched: false,
+      message: ''
+    }
+  });
 
-  inputChangeHandler = (event, id) => {
+  const [formvalidity, setFormValidity] = useState(false);
+
+  const inputChangeHandler = (event, id) => {
     const orderFormCopy = {
-      ...this.state.orderForm
+      ...orderForm
     };
     const toUpdateElement = { ...orderFormCopy[id] };
     toUpdateElement.value = event.target.value;
@@ -160,115 +159,94 @@ class ContactData extends React.Component {
       formValidityCheck =
         orderFormCopy[formElement].isValid && formValidityCheck;
     }
-
-    this.setState({
-      orderForm: orderFormCopy,
-      formvalidity: formValidityCheck
-    });
+    setOrderForm(orderFormCopy);
+    setFormValidity(formValidityCheck);
   };
 
-  orderHandler = event => {
+  const orderHandler = event => {
     event.preventDefault();
-    //this.setState({ loading: true });
+    //setState({ loading: true });
     const order = {
-      ingredients: this.props.ing,
-      price: this.props.price,
+      ingredients: props.ing,
+      price: props.price,
       customer: {
-        name: this.state.orderForm.name.value,
-        address: this.state.orderForm.address.value,
-        email: this.state.orderForm.email.value,
-        phone: this.state.orderForm.phone.value,
-        zipCode: this.state.orderForm.zip.value,
-        country: this.state.orderForm.country.value
+        name: orderForm.name.value,
+        address: orderForm.address.value,
+        email: orderForm.email.value,
+        phone: orderForm.phone.value,
+        zipCode: orderForm.zip.value,
+        country: orderForm.country.value
       },
-      deliveryMethod: this.state.orderForm.delivery.value,
-      userId: this.props.userId
+      deliveryMethod: orderForm.delivery.value,
+      userId: props.userId
     };
-    this.props.onOrderPlace(order, this.props.token);
-    /* axios
-      .post('/orders.json', order)
-      .then(res => {
-        console.log(res);
-        this.setState({ loading: false });
-        this.props.reHydrateState();
-        this.props.history.push('/');
-      })
-      .catch(err => {
-        this.setState({ loading: false });
-      });
-    console.log(order); */
+    props.onOrderPlace(order, props.token);
   };
 
-  render() {
-    //console.log(this.props);
-    const formArray = [];
-    for (let key in this.state.orderForm) {
-      formArray.push({
-        id: key,
-        config: this.state.orderForm[key]
-      });
-    }
-
-    let form = (
-      <form className="ui form segment container" onSubmit={this.onSubmitForm}>
-        <h3>Tell Us About Yourself</h3>
-
-        {formArray.map(form => {
-          return (
-            <Input
-              validity={!form.config.isValid ? 'invalid' : null}
-              touched={form.config.isToched ? 'touched' : null}
-              message={form.config.message}
-              key={form.id}
-              label={form.config.label}
-              inputtype={form.config.inputtype}
-              value={form.config.value}
-              onChange={event => this.inputChangeHandler(event, form.id)}
-              {...form.config.htmlConfig}
-            />
-          );
-        })}
-
-        <Button
-          btnType="Success"
-          disabled={!this.state.formvalidity}
-          click={this.orderHandler}
-        >
-          PLACE ORDER
-        </Button>
-      </form>
-    );
-    if (this.props.loading)
-      form = (
-        <div>
-          <Spinner />
-        </div>
-      );
-    if (this.props.error) {
-      form = (
-        <Modal show={this.props.error}>
-          <p style={{ textAlign: 'center' }}>{this.props.error.message}</p>
-          <p style={{ textAlign: 'center' }}>Try Reload!</p>
-        </Modal>
-      );
-    }
-    if (this.props.isPurchased) {
-      form = (
-        <Modal show={this.props.isPurchased}>
-          <h1 style={{ textAlign: 'center' }}>
-            You have successfully placed your order
-          </h1>
-          <div style={{ textAlign: 'center' }}>
-            <Link to="/" className="ui btn btn-link">
-              Back to home
-            </Link>
-          </div>
-        </Modal>
-      );
-    }
-    return <div>{form}</div>;
+  const formArray = [];
+  for (let key in orderForm) {
+    formArray.push({
+      id: key,
+      config: orderForm[key]
+    });
   }
-}
+
+  let form = (
+    <form className="ui form segment container">
+      <h3>Tell Us About Yourself</h3>
+
+      {formArray.map(form => {
+        return (
+          <Input
+            validity={!form.config.isValid ? 'invalid' : null}
+            touched={form.config.isToched ? 'touched' : null}
+            message={form.config.message}
+            key={form.id}
+            label={form.config.label}
+            inputtype={form.config.inputtype}
+            value={form.config.value}
+            onChange={event => inputChangeHandler(event, form.id)}
+            {...form.config.htmlConfig}
+          />
+        );
+      })}
+
+      <Button btnType="Success" disabled={!formvalidity} click={orderHandler}>
+        PLACE ORDER
+      </Button>
+    </form>
+  );
+  if (props.loading)
+    form = (
+      <div>
+        <Spinner />
+      </div>
+    );
+  if (props.error) {
+    form = (
+      <Modal show={props.error}>
+        <p style={{ textAlign: 'center' }}>{props.error.message}</p>
+        <p style={{ textAlign: 'center' }}>Try Reload!</p>
+      </Modal>
+    );
+  }
+  if (props.isPurchased) {
+    form = (
+      <Modal show={props.isPurchased}>
+        <h1 style={{ textAlign: 'center' }}>
+          You have successfully placed your order
+        </h1>
+        <div style={{ textAlign: 'center' }}>
+          <Link to="/" className="ui btn btn-link">
+            Back to home
+          </Link>
+        </div>
+      </Modal>
+    );
+  }
+  return <div>{form}</div>;
+};
+
 const mapStateToProps = state => {
   return {
     ing: state.burgerBuilder.ingredients,
